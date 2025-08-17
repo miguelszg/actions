@@ -55,6 +55,15 @@ def delete_comment(comment_id):
     comments = [c for c in comments if c['id'] != comment_id]
     return jsonify({"message": f"Comment {comment_id} deleted"}), 200
 
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({"error": "Resource not found"}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({"error": "Internal server error"}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
 "@ | Out-File -FilePath "app.py" -Encoding UTF8
@@ -62,3 +71,4 @@ if __name__ == '__main__':
 git add app.py
 git commit -m "feat: add comments API endpoints (GET, POST)"
 git push origin main
+
