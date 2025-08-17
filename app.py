@@ -81,5 +81,33 @@ def internal_error(error):
     logger.error("500 error occurred")
     return jsonify({"error": "Internal server error"}), 500
 
+
+@app.route('/stats')
+def stats():
+    if not comments:
+        return jsonify({
+            "total_comments": 0,
+            "last_comment": None,
+            "authors": [],
+            "comments_today": 0
+        })
+    
+    # Contar autores únicos
+    authors = list(set([c.get('author', 'Anonymous') for c in comments]))
+    
+    # Contar comentarios de hoy
+    today = datetime.now().date()
+    comments_today = sum(1 for c in comments 
+                        if datetime.fromisoformat(c['timestamp']).date() == today)
+    
+    return jsonify({
+        "total_comments": len(comments),
+        "last_comment": comments[-1],
+        "authors": authors,
+        "unique_authors": len(authors),
+        "comments_today": comments_today
+    })
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
+
